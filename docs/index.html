@@ -1,13 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<!DOCTYPE html><html lang="en"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Transfera — Transfer Anything, Instantly</title>
-  <meta name="description" content="Transfera is a blazing-fast, encrypted file transfer app for macOS and Android. Send files cross-platform with zero cloud storage." />
-  <link rel="icon" href="logo.png" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <meta name="description" content="Transfera is a blazing-fast, encrypted file transfer app for macOS and Android. Send files cross-platform with zero cloud storage.">
+  <link rel="icon" href="logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -210,8 +208,7 @@
     @media (max-width: 400px) {
       .download-grid { grid-template-columns: 1fr; }
     }
-  </style>
-</head>
+  </style></head>
 <body>
 
   <!-- Background orbs -->
@@ -222,7 +219,7 @@
   <!-- Nav -->
   <nav>
     <a href="#" class="nav-logo">
-      <img src="logo.png" alt="Transfera" />
+      <img src="logo.png" alt="Transfera">
       <span>Transfera</span>
     </a>
     <span class="nav-badge">v1.0</span>
@@ -231,14 +228,14 @@
   <!-- Hero -->
   <section class="hero">
     <div class="hero-logo-wrap">
-      <img src="logo.png" alt="Transfera Logo" />
+      <img src="logo.png" alt="Transfera Logo">
     </div>
-    <h1>Transfer Anything,<br/>Instantly.</h1>
+    <h1>Transfer Anything,<br>Instantly.</h1>
     <p>Blazing-fast, end-to-end encrypted file transfers between macOS and Android. No cloud storage. No limits. Just speed.</p>
 
     <div class="detected-banner" id="detectedBanner">
       <div class="dot"></div>
-      <span id="detectedText">Detecting your platform…</span>
+      <span id="detectedText">✦ macOS detected — your download is highlighted below</span>
     </div>
 
     <!-- Download Cards -->
@@ -254,7 +251,7 @@
       </a>
 
       <!-- macOS -->
-      <a class="dl-card macos" id="card-macos" href="https://github.com/ImSuvodeep/transfera/releases/latest/download/Transfera-macOS.zip">
+      <a class="dl-card macos detected" id="card-macos" href="https://github.com/ImSuvodeep/transfera/releases/latest/download/Transfera-macOS.zip">
         <span class="detected-tag">Your Device</span>
         <div class="dl-icon">🍎</div>
         <div class="dl-platform">macOS</div>
@@ -362,5 +359,4 @@
       btn.closest('a').addEventListener('click', e => e.preventDefault());
     });
   </script>
-</body>
-</html>
+</body></html>

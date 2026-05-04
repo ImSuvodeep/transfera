@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  signaling:
+    build: 
+      context: ./server
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+    restart: always
+
+  coturn:
+    image: coturn/coturn:latest
+    ports:
+      - "3478:3478/udp"
+      - "3478:3478/tcp"
+      - "49152-49200:49152-49200/udp"
+    volumes:
+      - ./coturn/turnserver.conf:/etc/coturn/turnserver.conf
+    command: -c /etc/coturn/turnserver.conf
+    network_mode: "host" # Host mode is recommended for TURN to avoid NAT issues
+    restart: always

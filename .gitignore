@@ -1,0 +1,58 @@
+# ── Flutter build artifacts ────────────────────────────────
+app/build/
+app/.dart_tool/
+app/.flutter-plugins
+app/.flutter-plugins-dependencies
+app/pubspec.lock
+
+# ── Flutter SDK (portable, not needed in repo) ─────────────
+tools/
+.flutter/
+.flutter_config/
+.flutter_home/
+.pub-cache/
+.cocoapods/
+
+# ── Node.js ────────────────────────────────────────────────
+server/node_modules/
+.npm/
+
+# ── Large binaries (don't commit APKs / zips to git) ───────
+*.apk
+*.ipa
+*.zip
+Transfera_macOS.app/
+Transfera-macOS.app/
+server/Transfera-Android.apk
+server/Transfera-macOS.zip
+
+# ── Logs & temp files ──────────────────────────────────────
+*.log
+*.log.*
+server/tunnel.txt
+server/tunnel_url.txt
+server/cloudflared.log
+server/server.log
+mac_debug.log
+macos_launch.log
+macos_network.log
+android_build.log
+ssh_tunnel.log
+
+# ── Secrets / env ──────────────────────────────────────────
+.env
+*.env
+server/production.env
+
+# ── macOS system ───────────────────────────────────────────
+.DS_Store
+**/.DS_Store
+
+# ── IDE ────────────────────────────────────────────────────
+.vscode/
+.idea/
+
+# ── Misc ───────────────────────────────────────────────────
+Library/
+.config/
+test_ntfy.dart

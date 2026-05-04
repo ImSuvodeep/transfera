@@ -1,0 +1,12 @@
+{
+  "name": "transfera-signaling",
+  "version": "1.0.0",
+  "description": "Signaling server for Transfera file transfer app",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "ws": "^8.18.0"
+  }
+}

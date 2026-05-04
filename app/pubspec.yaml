@@ -1,0 +1,55 @@
+name: transfera
+description: A cross-platform file transfer app using WebRTC and QR codes.
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_webrtc: 0.10.4
+  path_provider: ^2.1.2
+  permission_handler: ^11.3.1
+  mobile_scanner: ^3.5.7
+  qr_flutter: ^4.1.0
+  file_picker: ^8.0.0
+  app_links: ^6.4.0
+  receive_sharing_intent: ^1.4.5
+  uuid: ^4.4.0
+  socket_io_client: ^3.0.0
+  web_socket_channel: ^3.0.1
+  crypto: ^3.0.3
+  flutter_animate: ^4.5.0
+  animations: ^2.0.11
+  lottie: ^3.1.2
+  google_fonts: ^6.2.1
+  encrypt: ^5.0.3
+  open_file_plus: ^3.3.1
+  intl: ^0.19.0
+  cross_file: ^0.3.4+2
+  path: ^1.9.0
+  connectivity_plus: ^6.0.3
+  image_gallery_saver: ^2.0.3
+  http: ^1.6.0
+  archive: ^3.6.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+  flutter_launcher_icons: ^0.13.1
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  macos:
+    generate: true
+    image_path: "assets/app_icon.png"
+  image_path: "assets/app_icon.png"
+  min_sdk_android: 21
+
+flutter:
+  uses-material-design: true
+  # assets:
+  #   - assets/images/

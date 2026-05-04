@@ -1,0 +1,44 @@
+
+Running Gradle task 'assembleRelease'...                        
+Warning: The plugin flutter_webrtc requires Android SDK version 36 or higher.
+For more information about build configuration, see https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
+One or more plugins require a higher Android SDK version.
+Fix this issue by adding the following to /Users/suvodeepchowdhury/Transfera/app/android/app/build.gradle:
+android {
+  compileSdkVersion 36
+  ...
+}
+
+/Users/suvodeepchowdhury/Transfera/tools/fake_home/.pub-cache/hosted/pub.dev/flutter_webrtc-1.4.1/android/src/main/java/com/cloudwebrtc/webrtc/SurfaceTextureRenderer.java:118: error: cannot find symbol
+            new TextureRegistry.SurfaceProducer.Callback() {
+                                               ^
+  symbol:   class Callback
+  location: interface SurfaceProducer
+/Users/suvodeepchowdhury/Transfera/tools/fake_home/.pub-cache/hosted/pub.dev/flutter_webrtc-1.4.1/android/src/main/java/com/cloudwebrtc/webrtc/SurfaceTextureRenderer.java:119: error: method does not override or implement a method from a supertype
+              @Override
+              ^
+/Users/suvodeepchowdhury/Transfera/tools/fake_home/.pub-cache/hosted/pub.dev/flutter_webrtc-1.4.1/android/src/main/java/com/cloudwebrtc/webrtc/SurfaceTextureRenderer.java:124: error: method does not override or implement a method from a supertype
+              @Override
+              ^
+Note: Some input files use or override a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+Note: Some input files use unchecked or unsafe operations.
+Note: Recompile with -Xlint:unchecked for details.
+3 errors
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':flutter_webrtc:compileReleaseJavaWithJavac'.
+> Compilation failed; see the compiler error output for details.
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+
+* Get more help at https://help.gradle.org
+
+BUILD FAILED in 4s
+Running Gradle task 'assembleRelease'...                            4.8s
+Gradle task assembleRelease failed with exit code 1

@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Transfera — Transfer Anything, Instantly</title>
+  <meta name="description" content="Transfera is a blazing-fast, encrypted file transfer app for macOS and Android. Send files cross-platform with zero cloud storage." />
+  <link rel="icon" href="logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --purple: #7c3aed;
+      --purple-light: #a78bfa;
+      --cyan: #06b6d4;
+      --cyan-light: #67e8f9;
+      --bg: #07080f;
+      --surface: rgba(255,255,255,0.04);
+      --border: rgba(255,255,255,0.08);
+      --text: #f0f0ff;
+      --muted: #8888aa;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── Background orbs ── */
+    .bg-orb {
+      position: fixed; border-radius: 50%; filter: blur(120px);
+      pointer-events: none; z-index: 0;
+    }
+    .orb-1 { width: 600px; height: 600px; top: -200px; left: -150px;
+              background: radial-gradient(circle, rgba(124,58,237,0.35) 0%, transparent 70%); }
+    .orb-2 { width: 500px; height: 500px; bottom: -100px; right: -100px;
+              background: radial-gradient(circle, rgba(6,182,212,0.3) 0%, transparent 70%); }
+    .orb-3 { width: 300px; height: 300px; top: 50%; left: 50%; transform: translate(-50%,-50%);
+              background: radial-gradient(circle, rgba(167,139,250,0.12) 0%, transparent 70%); }
+
+    /* ── Layout ── */
+    .container { max-width: 900px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+
+    /* ── Nav ── */
+    nav {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 24px 32px; position: sticky; top: 0; z-index: 100;
+      background: rgba(7,8,15,0.7); backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .nav-logo img { width: 32px; height: 32px; border-radius: 8px; }
+    .nav-logo span { font-size: 18px; font-weight: 700;
+      background: linear-gradient(135deg, var(--purple-light), var(--cyan-light));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .nav-badge {
+      font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 20px;
+      background: linear-gradient(135deg, rgba(124,58,237,0.3), rgba(6,182,212,0.3));
+      border: 1px solid rgba(167,139,250,0.3); color: var(--purple-light);
+    }
+
+    /* ── Hero ── */
+    .hero { text-align: center; padding: 100px 24px 60px; }
+
+    .hero-logo-wrap {
+      display: inline-block; margin-bottom: 32px;
+      animation: float 4s ease-in-out infinite;
+    }
+    .hero-logo-wrap img {
+      width: 110px; height: 110px; border-radius: 28px;
+      box-shadow: 0 0 60px rgba(124,58,237,0.5), 0 0 120px rgba(6,182,212,0.2);
+    }
+    @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
+    .hero h1 {
+      font-size: clamp(36px, 7vw, 72px); font-weight: 900; line-height: 1.05;
+      letter-spacing: -2px; margin-bottom: 20px;
+      background: linear-gradient(135deg, #fff 30%, var(--purple-light) 65%, var(--cyan-light) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .hero p {
+      font-size: clamp(16px, 2.5vw, 20px); color: var(--muted);
+      max-width: 560px; margin: 0 auto 48px; line-height: 1.7; font-weight: 400;
+    }
+
+    /* ── Platform detected banner ── */
+    .detected-banner {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: linear-gradient(135deg, rgba(124,58,237,0.2), rgba(6,182,212,0.15));
+      border: 1px solid rgba(167,139,250,0.35); border-radius: 999px;
+      padding: 8px 20px; font-size: 13px; font-weight: 600;
+      color: var(--purple-light); margin-bottom: 36px;
+      animation: pulse-border 2.5s ease-in-out infinite;
+    }
+    .detected-banner .dot { width: 7px; height: 7px; border-radius: 50%;
+      background: var(--cyan-light); box-shadow: 0 0 8px var(--cyan); }
+    @keyframes pulse-border {
+      0%,100% { box-shadow: 0 0 0 0 rgba(167,139,250,0); }
+      50% { box-shadow: 0 0 0 6px rgba(167,139,250,0.1); }
+    }
+
+    /* ── Download cards ── */
+    .download-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px; max-width: 740px; margin: 0 auto 80px;
+    }
+
+    .dl-card {
+      position: relative; background: var(--surface);
+      border: 1px solid var(--border); border-radius: 20px;
+      padding: 28px 24px; cursor: pointer; text-decoration: none;
+      transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+      overflow: hidden; display: flex; flex-direction: column; align-items: center;
+      gap: 12px; text-align: center;
+    }
+    .dl-card::before {
+      content: ''; position: absolute; inset: 0; border-radius: 20px; opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .dl-card:hover { transform: translateY(-4px); }
+    .dl-card:hover::before { opacity: 1; }
+
+    .dl-card.android::before { background: linear-gradient(135deg, rgba(52,211,153,0.08), rgba(6,182,212,0.08)); }
+    .dl-card.android:hover { border-color: rgba(52,211,153,0.5); box-shadow: 0 8px 40px rgba(52,211,153,0.15); }
+
+    .dl-card.macos::before { background: linear-gradient(135deg, rgba(124,58,237,0.1), rgba(167,139,250,0.08)); }
+    .dl-card.macos:hover { border-color: rgba(167,139,250,0.5); box-shadow: 0 8px 40px rgba(124,58,237,0.2); }
+
+    .dl-card.windows::before { background: linear-gradient(135deg, rgba(59,130,246,0.08), rgba(96,165,250,0.08)); }
+    .dl-card.windows:hover { border-color: rgba(96,165,250,0.4); box-shadow: 0 8px 40px rgba(59,130,246,0.15); }
+
+    .dl-card.ios::before { background: linear-gradient(135deg, rgba(251,191,36,0.06), rgba(249,115,22,0.06)); }
+    .dl-card.ios:hover { border-color: rgba(251,191,36,0.35); box-shadow: 0 8px 40px rgba(251,191,36,0.1); }
+
+    /* Detected highlight */
+    .dl-card.detected {
+      border-color: rgba(167,139,250,0.6) !important;
+      box-shadow: 0 0 0 1px rgba(167,139,250,0.3), 0 8px 40px rgba(124,58,237,0.25) !important;
+    }
+    .dl-card.detected .detected-tag {
+      display: inline-flex !important;
+    }
+    .detected-tag {
+      display: none; font-size: 10px; font-weight: 700; letter-spacing: 0.5px;
+      text-transform: uppercase; padding: 3px 10px; border-radius: 999px;
+      background: linear-gradient(135deg, var(--purple), var(--cyan));
+      color: white; position: absolute; top: 14px; right: 14px;
+    }
+
+    .dl-icon { font-size: 40px; line-height: 1; }
+    .dl-platform { font-size: 17px; font-weight: 700; color: var(--text); }
+    .dl-version { font-size: 12px; color: var(--muted); }
+    .dl-btn {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 13px; font-weight: 600; padding: 9px 20px; border-radius: 10px;
+      margin-top: 4px; transition: opacity 0.2s;
+      position: relative; z-index: 1;
+    }
+    .dl-btn:hover { opacity: 0.85; }
+
+    .android .dl-btn { background: linear-gradient(135deg, #34d399, #06b6d4); color: #07080f; }
+    .macos .dl-btn { background: linear-gradient(135deg, #7c3aed, #a78bfa); color: white; }
+    .windows .dl-btn { background: linear-gradient(135deg, #3b82f6, #60a5fa); color: white; }
+    .ios .dl-btn { background: linear-gradient(135deg, #f59e0b, #fb923c); color: white; }
+
+    .dl-btn.soon { background: rgba(255,255,255,0.06); color: var(--muted); cursor: default; }
+
+    /* ── Features ── */
+    .features { padding: 20px 24px 80px; }
+    .section-label {
+      text-align: center; font-size: 12px; font-weight: 700; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--purple-light); margin-bottom: 16px;
+    }
+    .section-title {
+      text-align: center; font-size: clamp(28px, 4vw, 42px); font-weight: 800;
+      margin-bottom: 52px; letter-spacing: -1px;
+    }
+    .feat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
+    .feat-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
+      padding: 28px 24px; transition: transform 0.2s, border-color 0.2s;
+    }
+    .feat-card:hover { transform: translateY(-3px); border-color: rgba(167,139,250,0.3); }
+    .feat-icon { font-size: 28px; margin-bottom: 14px; }
+    .feat-title { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+    .feat-desc { font-size: 14px; color: var(--muted); line-height: 1.6; }
+
+    /* ── Footer ── */
+    footer {
+      border-top: 1px solid var(--border); padding: 32px 24px;
+      text-align: center; font-size: 13px; color: var(--muted);
+      position: relative; z-index: 1;
+    }
+    footer a { color: var(--purple-light); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    /* ── Responsive ── */
+    @media (max-width: 600px) {
+      nav { padding: 16px 20px; }
+      .hero { padding: 70px 16px 40px; }
+      .download-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 400px) {
+      .download-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Background orbs -->
+  <div class="bg-orb orb-1"></div>
+  <div class="bg-orb orb-2"></div>
+  <div class="bg-orb orb-3"></div>
+
+  <!-- Nav -->
+  <nav>
+    <a href="#" class="nav-logo">
+      <img src="logo.png" alt="Transfera" />
+      <span>Transfera</span>
+    </a>
+    <span class="nav-badge">v1.0</span>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-logo-wrap">
+      <img src="logo.png" alt="Transfera Logo" />
+    </div>
+    <h1>Transfer Anything,<br/>Instantly.</h1>
+    <p>Blazing-fast, end-to-end encrypted file transfers between macOS and Android. No cloud storage. No limits. Just speed.</p>
+
+    <div class="detected-banner" id="detectedBanner">
+      <div class="dot"></div>
+      <span id="detectedText">Detecting your platform…</span>
+    </div>
+
+    <!-- Download Cards -->
+    <div class="download-grid">
+
+      <!-- Android -->
+      <a class="dl-card android" id="card-android" href="https://github.com/ImSuvodeep/transfera/releases/latest/download/Transfera-Android.apk">
+        <span class="detected-tag">Your Device</span>
+        <div class="dl-icon">🤖</div>
+        <div class="dl-platform">Android</div>
+        <div class="dl-version">APK · Sideload</div>
+        <div class="dl-btn">⬇ Download APK</div>
+      </a>
+
+      <!-- macOS -->
+      <a class="dl-card macos" id="card-macos" href="https://github.com/ImSuvodeep/transfera/releases/latest/download/Transfera-macOS.zip">
+        <span class="detected-tag">Your Device</span>
+        <div class="dl-icon">🍎</div>
+        <div class="dl-platform">macOS</div>
+        <div class="dl-version">Universal (Apple Silicon + Intel)</div>
+        <div class="dl-btn">⬇ Download for Mac</div>
+      </a>
+
+      <!-- Windows -->
+      <a class="dl-card windows" id="card-windows" href="#">
+        <span class="detected-tag">Your Device</span>
+        <div class="dl-icon">🪟</div>
+        <div class="dl-platform">Windows</div>
+        <div class="dl-version">Coming Soon</div>
+        <div class="dl-btn soon">Coming Soon</div>
+      </a>
+
+      <!-- iOS -->
+      <a class="dl-card ios" id="card-ios" href="#">
+        <span class="detected-tag">Your Device</span>
+        <div class="dl-icon">📱</div>
+        <div class="dl-platform">iOS</div>
+        <div class="dl-version">Coming Soon</div>
+        <div class="dl-btn soon">Coming Soon</div>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="features">
+    <div class="container">
+      <p class="section-label">Why Transfera</p>
+      <h2 class="section-title">Built for real transfers</h2>
+      <div class="feat-grid">
+        <div class="feat-card">
+          <div class="feat-icon">⚡</div>
+          <div class="feat-title">Indestructible Transfers</div>
+          <div class="feat-desc">Auto-resumes from the exact byte where it stopped. Airplane mode, network drops — nothing kills your transfer.</div>
+        </div>
+        <div class="feat-card">
+          <div class="feat-icon">🔒</div>
+          <div class="feat-title">End-to-End Encrypted</div>
+          <div class="feat-desc">AES-256 encryption on every chunk. Your files are encrypted before they leave your device.</div>
+        </div>
+        <div class="feat-card">
+          <div class="feat-icon">📁</div>
+          <div class="feat-title">Folder Transfers</div>
+          <div class="feat-desc">Send entire folders in one go. Batch transfer with real-time progress for every file inside.</div>
+        </div>
+        <div class="feat-card">
+          <div class="feat-icon">🌐</div>
+          <div class="feat-title">Works Anywhere</div>
+          <div class="feat-desc">Same WiFi or across the world. Local TCP for speed, relay fallback for distance. Always connected.</div>
+        </div>
+        <div class="feat-card">
+          <div class="feat-icon">🚀</div>
+          <div class="feat-title">Zero Cloud Storage</div>
+          <div class="feat-desc">Files go directly from your device to theirs. Nothing is stored on any server. Pure peer-to-peer.</div>
+        </div>
+        <div class="feat-card">
+          <div class="feat-icon">📡</div>
+          <div class="feat-title">6-Digit Pairing</div>
+          <div class="feat-desc">Type a 6-digit code to connect instantly. No accounts, no logins, no setup. Just send.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p>Made with ❤️ · <a href="https://github.com/ImSuvodeep/transfera">GitHub</a> · Open Source</p>
+    <p style="margin-top:8px; font-size:12px;">Transfera is free and open source. Use it however you like.</p>
+  </footer>
+
+  <script>
+    // ── Platform detection ──
+    const ua = navigator.userAgent.toLowerCase();
+    const platform = navigator.platform?.toLowerCase() || '';
+
+    let detected = null;
+    if (/android/.test(ua)) detected = 'android';
+    else if (/iphone|ipad|ipod/.test(ua)) detected = 'ios';
+    else if (/mac/.test(platform) || /mac os x/.test(ua)) detected = 'macos';
+    else if (/win/.test(platform) || /windows/.test(ua)) detected = 'windows';
+
+    const banner = document.getElementById('detectedBanner');
+    const bannerText = document.getElementById('detectedText');
+
+    const names = { android: 'Android', ios: 'iOS', macos: 'macOS', windows: 'Windows' };
+
+    if (detected) {
+      bannerText.textContent = `✦ ${names[detected]} detected — your download is highlighted below`;
+      const card = document.getElementById('card-' + detected);
+      if (card) {
+        card.classList.add('detected');
+        // Smooth scroll to card after a moment
+        setTimeout(() => card.scrollIntoView({ behavior: 'smooth', block: 'center' }), 600);
+      }
+    } else {
+      bannerText.textContent = '✦ Choose your platform below';
+    }
+
+    // ── Prevent "coming soon" cards from navigating ──
+    document.querySelectorAll('.dl-btn.soon').forEach(btn => {
+      btn.closest('a').addEventListener('click', e => e.preventDefault());
+    });
+  </script>
+</body>
+</html>

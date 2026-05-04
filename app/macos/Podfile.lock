@@ -1,0 +1,54 @@
+PODS:
+  - app_links (1.0.0):
+    - FlutterMacOS
+  - connectivity_plus (0.0.1):
+    - FlutterMacOS
+  - flutter_webrtc (0.9.36):
+    - FlutterMacOS
+    - WebRTC-SDK (= 114.5735.10)
+  - FlutterMacOS (1.0.0)
+  - mobile_scanner (3.5.6):
+    - FlutterMacOS
+  - path_provider_foundation (0.0.1):
+    - Flutter
+    - FlutterMacOS
+  - WebRTC-SDK (114.5735.10)
+
+DEPENDENCIES:
+  - app_links (from `Flutter/ephemeral/.symlinks/plugins/app_links/macos`)
+  - connectivity_plus (from `Flutter/ephemeral/.symlinks/plugins/connectivity_plus/macos`)
+  - flutter_webrtc (from `Flutter/ephemeral/.symlinks/plugins/flutter_webrtc/macos`)
+  - FlutterMacOS (from `Flutter/ephemeral`)
+  - mobile_scanner (from `Flutter/ephemeral/.symlinks/plugins/mobile_scanner/macos`)
+  - path_provider_foundation (from `Flutter/ephemeral/.symlinks/plugins/path_provider_foundation/darwin`)
+
+SPEC REPOS:
+  trunk:
+    - WebRTC-SDK
+
+EXTERNAL SOURCES:
+  app_links:
+    :path: Flutter/ephemeral/.symlinks/plugins/app_links/macos
+  connectivity_plus:
+    :path: Flutter/ephemeral/.symlinks/plugins/connectivity_plus/macos
+  flutter_webrtc:
+    :path: Flutter/ephemeral/.symlinks/plugins/flutter_webrtc/macos
+  FlutterMacOS:
+    :path: Flutter/ephemeral
+  mobile_scanner:
+    :path: Flutter/ephemeral/.symlinks/plugins/mobile_scanner/macos
+  path_provider_foundation:
+    :path: Flutter/ephemeral/.symlinks/plugins/path_provider_foundation/darwin
+
+SPEC CHECKSUMS:
+  app_links: afe860c55c7ef176cea7fb630a2b7d7736de591d
+  connectivity_plus: 4adf20a405e25b42b9c9f87feff8f4b6fde18a4e
+  flutter_webrtc: 8d46529f47d8108a50eb044e5049985a398d296a
+  FlutterMacOS: 8f6f14fa908a6fb3fba0cd85dbd81ec4b251fb24
+  mobile_scanner: 2f0c13d5ef778c4e5121348d775dce17f18e79d0
+  path_provider_foundation: 080d55be775b7414fd5a5ef3ac137b97b097e564
+  WebRTC-SDK: 8c0edd05b880a39648118192c252667ea06dea51
+
+PODFILE CHECKSUM: 08071783f4010092061d51c43a285aacc2299ae2
+
+COCOAPODS: 1.16.2

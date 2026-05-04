@@ -365,7 +365,7 @@ const server = http.createServer((req, res) => {
     const isWindows = /windows/i.test(ua);
     const isLinux   = /linux/i.test(ua) && !isAndroid;
 
-    const TUNNEL = '${TUNNEL_URL}';
+    const TUNNEL = 'https://transfera-server.onrender.com';
 
     // Map platform → {label, icon, url, note}
     function getPlatformInfo() {

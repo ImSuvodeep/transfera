@@ -11,6 +11,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'sender_screen.dart';
 import 'receiver_screen.dart';
+import 'history_screen.dart';
 import '../services/transfer_manager.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -89,21 +90,28 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _pickFile() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles();
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      allowMultiple: true,
+    );
 
-    if (result != null) {
-      File file = File(result.files.single.path!);
+    if (result != null && result.files.isNotEmpty) {
       if (!mounted) return;
-      final bf = BatchFile(
-        id: 'single-${DateTime.now().millisecondsSinceEpoch}',
-        path: file.path.split('/').last,
-        size: file.lengthSync(),
-        lastModified: file.lastModifiedSync().millisecondsSinceEpoch,
-        source: file,
-      );
+      final batchFiles = result.files.map((f) {
+        final file = File(f.path!);
+        return BatchFile(
+          id: 'multi-${DateTime.now().millisecondsSinceEpoch}-${f.name}',
+          path: f.name,
+          size: f.size,
+          lastModified: file.lastModifiedSync().millisecondsSinceEpoch,
+          source: file,
+        );
+      }).toList();
+      final rootName = result.files.length == 1
+          ? result.files.first.name
+          : '${result.files.length} files';
       Navigator.of(context).push(
         MaterialPageRoute(
-          builder: (context) => SenderScreen(files: [bf], rootName: file.path.split('/').last),
+          builder: (context) => SenderScreen(files: batchFiles, rootName: rootName),
         ),
       );
     }
@@ -173,6 +181,22 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  // History button row
+                  Align(
+                    alignment: Alignment.topRight,
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: IconButton(
+                        icon: const Icon(Icons.history_rounded, color: Colors.white54),
+                        tooltip: 'Transfer History',
+                        onPressed: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(builder: (_) => const HistoryScreen()),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
                   const Spacer(),
                   GestureDetector(
                     onLongPress: () => DebugPanel.show(context),
@@ -240,7 +264,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ElevatedButton.icon(
                             onPressed: _pickFile,
                             icon: const Icon(Icons.file_upload_outlined),
-                            label: const Text('Send a File'),
+                            label: const Text('Send Files'),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.white.withOpacity(0.05),
                               foregroundColor: Colors.white,

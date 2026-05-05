@@ -9,6 +9,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../services/webrtc_service.dart';
 import '../services/transfer_manager.dart';
+import '../services/history_service.dart';
 import '../widgets/premium_widgets.dart';
 import '../widgets/route_indicator.dart';
 import 'package:open_file_plus/open_file_plus.dart';
@@ -30,6 +31,12 @@ class _ReceiverScreenState extends State<ReceiverScreen> {
   String statusMessage = 'Initializing...';
   double progress = 0.0;
   String? fileName;
+
+  // ── Speed tracking ──
+  double _speedMBps = 0.0;
+  double _prevProgress = 0.0;
+  DateTime? _prevSpeedTime;
+  bool _historyLogged = false;
 
   // Services are nullable so we can safely guard against double-dispose
   WebRTCService? _webrtc;
@@ -166,14 +173,44 @@ class _ReceiverScreenState extends State<ReceiverScreen> {
     };
 
     transferManager.progressController.stream.listen((val) {
-      if (mounted) {
-        setState(() {
-          progress = val;
-          fileName = transferManager.fileName;
-        });
+      if (!mounted) return;
+      final now = DateTime.now();
+      final totalBytes = transferManager.totalBatchBytes > 0
+          ? transferManager.totalBatchBytes
+          : (transferManager.fileSize ?? 0);
+      if (_prevSpeedTime != null && totalBytes > 0) {
+        final dtMs = now.difference(_prevSpeedTime!).inMilliseconds;
+        if (dtMs >= 500) {
+          final bytesDelta = (val - _prevProgress) * totalBytes;
+          final speed = bytesDelta / (dtMs / 1000.0) / (1024 * 1024);
+          if (speed > 0) _speedMBps = speed;
+          _prevProgress = val;
+          _prevSpeedTime = now;
+        }
+      } else {
+        _prevProgress = val;
+        _prevSpeedTime = now;
       }
+      setState(() {
+        progress = val;
+        fileName = transferManager.fileName;
+      });
       if (val >= 1.0) {
         _showSuccess();
+        if (!_historyLogged) {
+          _historyLogged = true;
+          final duration = transferManager.startTime != null
+              ? DateTime.now().difference(transferManager.startTime!)
+              : null;
+          HistoryService().add(TransferRecord(
+            fileName: fileName ?? 'File',
+            fileSize: totalBytes,
+            direction: 'received',
+            timestamp: DateTime.now(),
+            duration: duration,
+            speedBytesPerSec: _speedMBps * 1024 * 1024,
+          ));
+        }
       }
     });
   }
@@ -428,7 +465,17 @@ class _ReceiverScreenState extends State<ReceiverScreen> {
                             '${(progress * 100).toInt()}%',
                             style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
                           ),
-                          const SizedBox(height: 12),
+                          const SizedBox(height: 4),
+                          if (_speedMBps > 0)
+                            Text(
+                              '${_speedMBps.toStringAsFixed(1)} MB/s',
+                              style: const TextStyle(
+                                color: Color(0xFF03DAC6),
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          const SizedBox(height: 8),
                           RouteIndicator(routeNotifier: transferManager.route),
                            if (progress >= 1.0 && transferManager.lastSavedPath != null) ...[
                             const SizedBox(height: 24),

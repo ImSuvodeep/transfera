@@ -12,6 +12,7 @@ import '../services/webrtc_service.dart';
 import '../services/encryption_service.dart';
 import '../services/transfer_manager.dart';
 import '../services/share_link_service.dart';
+import '../services/history_service.dart';
 import '../widgets/premium_widgets.dart';
 import '../widgets/route_indicator.dart';
 import '../config.dart';
@@ -45,6 +46,11 @@ class _SenderScreenState extends State<SenderScreen> {
   String connectionStatus = 'Connecting to server...';
   double progress = 0.0;
   String? transferCode;
+
+  // ── Speed tracking ──
+  double _speedMBps = 0.0;
+  double _prevProgress = 0.0;
+  DateTime? _prevSpeedTime;
 
   // ── Share Link state ──
   bool _isUploadingShare = false;
@@ -147,7 +153,45 @@ class _SenderScreenState extends State<SenderScreen> {
     };
 
     transferManager.progressController.stream.listen((val) {
-      if (mounted) setState(() => progress = val);
+      if (!mounted) return;
+      final now = DateTime.now();
+      final totalBytes = transferManager.totalBatchBytes > 0
+          ? transferManager.totalBatchBytes
+          : (transferManager.fileSize ?? 0);
+      if (_prevSpeedTime != null && totalBytes > 0) {
+        final dtMs = now.difference(_prevSpeedTime!).inMilliseconds;
+        if (dtMs >= 500) {
+          final bytesDelta = (val - _prevProgress) * totalBytes;
+          final speed = bytesDelta / (dtMs / 1000.0) / (1024 * 1024);
+          if (speed > 0) _speedMBps = speed;
+          _prevProgress = val;
+          _prevSpeedTime = now;
+        }
+      } else {
+        _prevProgress = val;
+        _prevSpeedTime = now;
+      }
+      setState(() => progress = val);
+
+      // Log to history when complete
+      if (val >= 1.0) {
+        final duration = transferManager.startTime != null
+            ? DateTime.now().difference(transferManager.startTime!)
+            : null;
+        final name = transferManager.totalFiles > 1
+            ? '${transferManager.totalFiles} files'
+            : (transferManager.currentFileName.isNotEmpty
+                ? transferManager.currentFileName
+                : widget.rootName);
+        HistoryService().add(TransferRecord(
+          fileName: name,
+          fileSize: totalBytes,
+          direction: 'sent',
+          timestamp: DateTime.now(),
+          duration: duration,
+          speedBytesPerSec: _speedMBps * 1024 * 1024,
+        ));
+      }
     });
 
     // (WebRTC started in _initTransfer)
@@ -589,6 +633,18 @@ class _SenderScreenState extends State<SenderScreen> {
                                 style: const TextStyle(color: Colors.grey, fontSize: 12))
                             else
                               const Text('Encrypting & Sending', style: TextStyle(color: Colors.grey)),
+                            if (_speedMBps > 0) ...
+                              [
+                                const SizedBox(height: 8),
+                                Text(
+                                  '${_speedMBps.toStringAsFixed(1)} MB/s',
+                                  style: const TextStyle(
+                                    color: Color(0xFFBB86FC),
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
                           ],
                         ),
                       ),

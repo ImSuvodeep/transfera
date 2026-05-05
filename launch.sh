@@ -3,32 +3,43 @@
 # Get the script directory
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 
-# 1. Setup Environment
-source "$SCRIPT_DIR/start_dev.sh"
-export PATH="/opt/homebrew/bin:$PATH"
+# Flutter path (bundled with project)
+FLUTTER="$SCRIPT_DIR/tools/flutter/bin/flutter"
 
-# 2. Start Cloudflare Tunnel & Signaling Server automatically
-echo "🌐 Initializing Cloudflare Remote Tunnel..."
-./ready_for_remote.sh
+# Signaling is now on Render — no tunnel needed!
 
-
-# 3. Handle Launch Options
+# Handle Launch Options
 cd "$SCRIPT_DIR/app"
 case "$1" in
     "macos")
         echo "💻 Launching Transfera for macOS..."
-        flutter run -d macos
+        "$FLUTTER" run -d macos
         ;;
     "ios")
         echo "📱 Launching Transfera for iOS Simulator..."
-        flutter run -d ios
+        "$FLUTTER" run -d ios
         ;;
     "android")
         echo "🤖 Launching Transfera for Android..."
-        flutter run -d android
+        "$FLUTTER" run -d android
+        ;;
+    "build-apk")
+        echo "📦 Building release APK..."
+        "$FLUTTER" build apk --release
+        echo "✅ APK: app/build/app/outputs/flutter-apk/app-release.apk"
+        ;;
+    "build-macos")
+        echo "🏗️ Building macOS release app..."
+        "$FLUTTER" build macos
+        echo "✅ App: app/build/macos/Build/Products/Release/transfera.app"
+        open "$SCRIPT_DIR/app/build/macos/Build/Products/Release/transfera.app"
         ;;
     *)
-        echo "❓ Usage: ./launch.sh [macos|ios|android]"
-        echo "Example: ./launch.sh macos"
+        echo "Usage: ./launch.sh [macos|ios|android|build-apk|build-macos]"
+        echo ""
+        echo "  macos       — Run Mac debug build (hot reload enabled)"
+        echo "  android     — Run on connected Android device"
+        echo "  build-apk   — Build release APK for Android"
+        echo "  build-macos — Build & open release Mac app"
         ;;
 esac

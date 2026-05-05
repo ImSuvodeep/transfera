@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'screens/home_screen.dart';
 import 'services/windows_registry_service.dart';
+import 'services/history_service.dart';
 import 'package:app_links/app_links.dart';
 import 'package:animations/animations.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -15,6 +16,7 @@ void main() async {
   // Fetch live tunnel URL from local server (macOS) before app starts.
   // On Android this fails gracefully and uses the hardcoded fallback.
   await AppConfig.initialize();
+  await HistoryService().load();
   
   runApp(const TransferaApp());
 }

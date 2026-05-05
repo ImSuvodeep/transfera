@@ -57,6 +57,9 @@ class TransferManager {
   DateTime? startTime;
   DateTime? endTime;
 
+  // Speed tracking — updated by UI screens via the progress stream.
+  final ValueNotifier<double> speedBytesPerSec = ValueNotifier(0.0);
+
   set state(TransferState value) {
     if (_state != value) {
       if (value == TransferState.transferring && startTime == null) {

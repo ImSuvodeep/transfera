@@ -1,59 +1,18 @@
-import 'dart:io';
-import 'dart:convert';
 import 'package:flutter/foundation.dart';
-import 'package:http/http.dart' as http;
 
 class AppConfig {
-  static String _remoteUrl = '';
+  // Permanent cloud server URL — no Mac, no tunnel, no NTFY bridge needed.
+  static const String _renderUrl = 'https://transfera-server.onrender.com';
+  static String _remoteUrl = _renderUrl;
 
-  /// Called once at app startup. Fetches the live tunnel URL.
+  /// Called once at app startup.
   static Future<void> initialize() async {
-    try {
-      // Fetch the latest published Cloudflare URL from the unique discovery bridge
-      final response = await http
-          .get(Uri.parse('https://ntfy.sh/transfera-suvodeep-bridge/raw?poll=1'))
-          .timeout(const Duration(seconds: 5));
-
-      if (response.statusCode == 200) {
-        final lines = response.body.split('\n').where((l) => l.trim().isNotEmpty).toList();
-        if (lines.isNotEmpty) {
-          final url = lines.last.trim();
-          if (url.startsWith('http')) {
-            _remoteUrl = url;
-            debugPrint('[CONFIG] Fetched live Cloudflare URL from unique bridge: $_remoteUrl');
-            return;
-          }
-        }
-      }
-    } catch (e) {
-      debugPrint('[CONFIG] Could not fetch remote config from bridge: $e');
-    }
-
-    // Local fallback: try localhost config if we're running locally on macOS
-    try {
-      final response = await http
-          .get(Uri.parse('http://127.0.0.1:3000/config'))
-          .timeout(const Duration(seconds: 2));
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        final url = data['tunnelUrl'] as String?;
-        if (url != null && url.isNotEmpty) {
-          _remoteUrl = url;
-          debugPrint('[CONFIG] Fetched live tunnel URL from local server: $_remoteUrl');
-          return;
-        }
-      }
-    } catch (_) {}
-
-    // Ultimate fallback: On macOS the server IS localhost, so use that directly.
-    if (!kIsWeb && Platform.isMacOS) {
-      _remoteUrl = 'http://127.0.0.1:3000';
-    }
-    debugPrint('[CONFIG] Using fallback URL: $_remoteUrl');
+    _remoteUrl = _renderUrl;
+    debugPrint('[CONFIG] Using permanent Render server: $_remoteUrl');
   }
 
   static String get remoteUrl => _remoteUrl;
-  
+
   static void updateRemoteUrl(String url) {
     if (url.isNotEmpty && url.startsWith('http')) {
       _remoteUrl = url;
@@ -61,16 +20,9 @@ class AppConfig {
     }
   }
 
-  static String get signalingUrl {
-    // macOS: the server runs locally, always hit it directly.
-    if (!kIsWeb && Platform.isMacOS) {
-      return 'http://127.0.0.1:3000';
-    }
-    // Android/iOS: must use the remote tunnel URL
-    if (_remoteUrl.isNotEmpty) return _remoteUrl;
-    return 'http://10.0.2.2:3000'; // emulator fallback
-  }
+  static String get signalingUrl => _remoteUrl;
 }
+
 
 class FEATURES {
   static const bool smartTransportRace = true;

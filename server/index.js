@@ -31,17 +31,11 @@ const server = http.createServer((req, res) => {
 
   // ── App download endpoints ─────────────────────────────────────────────────
   if (req.method === 'GET' && req.url === '/download/android') {
-    const apkPath = path.join(__dirname, 'Transfera-Android.apk');
-    if (!fs.existsSync(apkPath)) {
-      res.writeHead(404); res.end('APK not found'); return;
-    }
-    const stat = fs.statSync(apkPath);
-    res.writeHead(200, {
-      'Content-Type': 'application/vnd.android.package-archive',
-      'Content-Disposition': 'attachment; filename="Transfera.apk"',
-      'Content-Length': stat.size,
+    res.writeHead(302, {
+      'Location': 'https://github.com/ImSuvodeep/transfera/releases/download/v1.0.0/app-release.apk',
+      'Cache-Control': 'no-store',
     });
-    fs.createReadStream(apkPath).pipe(res);
+    res.end();
     return;
   }
 
